@@ -219,11 +219,6 @@ cp /tmp/ramdisk.img.gz /boot/ramdisk.img.gz
     ```        
 
 ## 其他
-- 使用`insmod`命令将`initrd`中的模块加载到内核
-    ```commandline
-    The initrd contains a minimal set of directories and executables to achieve this, 
-    such as the insmod tool to install kernel modules into the kernel.
-    ```
         
 > 参考：
 > [Linux initial RAM disk (initrd) overview](https://www.ibm.com/developerworks/linux/library/l-initrd/index.html)    
