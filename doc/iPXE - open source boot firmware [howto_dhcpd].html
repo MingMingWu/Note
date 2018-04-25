@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0048)http://www.ipxe.org/howto/dhcpd#pxe_chainloading -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>
+    iPXE - open source boot firmware    [howto:dhcpd]
+  </title>
+
+  <meta name="generator" content="DokuWiki snapshot? unknown">
+<meta name="robots" content="index,follow">
+<meta name="date" content="2017-04-12T16:18:50+0100">
+<meta name="keywords" content="howto,dhcpd">
+<link rel="search" type="application/opensearchdescription+xml" href="http://www.ipxe.org/lib/exe/opensearch.php" title="iPXE - open source boot firmware">
+<link rel="start" href="http://www.ipxe.org/">
+<link rel="contents" href="http://www.ipxe.org/howto/dhcpd?do=index" title="Index">
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="http://www.ipxe.org/feed.php">
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="http://www.ipxe.org/feed.php?mode=list&amp;ns=howto">
+<link rel="alternate" type="text/html" title="Plain HTML" href="http://www.ipxe.org/_export/xhtml/howto/dhcpd">
+<link rel="alternate" type="text/plain" title="Wiki Markup" href="http://www.ipxe.org/_export/raw/howto/dhcpd">
+<link rel="canonical" href="http://www.ipxe.org/howto/dhcpd">
+<link rel="stylesheet" media="all" type="text/css" href="./iPXE - open source boot firmware [howto_dhcpd]_files/css.php">
+<link rel="stylesheet" media="screen" type="text/css" href="./iPXE - open source boot firmware [howto_dhcpd]_files/css(1).php">
+<link rel="stylesheet" media="print" type="text/css" href="./iPXE - open source boot firmware [howto_dhcpd]_files/css(2).php">
+<script type="text/javascript" charset="utf-8"><!--//--><![CDATA[//><!--
+var NS='howto';var JSINFO = {"id":"howto:dhcpd","namespace":"howto"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="./iPXE - open source boot firmware [howto_dhcpd]_files/js.php"></script>
+
+  <link rel="shortcut icon" href="http://www.ipxe.org/lib/tpl/doogiestpl/images/favicon.ico">
+
+  <script></script></head>
+
+
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="header_left"></div>
+      <div class="logo">
+        <a href="http://www.ipxe.org/" name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[ALT+H]">iPXE - open source boot firmware</a>      </div>
+      <div class="header_right"></div>
+      <div class="pagename">
+	<a href="http://www.ipxe.org/" name="dokuwiki__logo" id="dokuwiki__logo"><img src="./iPXE - open source boot firmware [howto_dhcpd]_files/ipxe-small.png" width="159" height="105" alt="iPXE logo"></a>      </div>
+
+      <div id="tabnavi" class="tabnavi">
+        <ul>
+<li><a href="http://www.ipxe.org/start">Home</a></li>
+<li><a href="http://www.ipxe.org/download">Download</a></li>
+<li><a href="http://www.ipxe.org/pics">Screenshots</a></li>
+<li><a href="http://www.ipxe.org/docs">Documentation</a></li>
+<li><a href="http://www.ipxe.org/faq">FAQ</a></li>
+<li><a href="http://www.ipxe.org/contact">Contact</a></li>
+</ul>
+      </div>
+      
+      <div class="clearer"></div>
+          </div>  
+  </div>
+        
+      <!-- login state -->
+      <div class="user">
+              </div>
+      
+      <!--  breadcrumbs -->
+          
+            
+      
+
+  
+  <div class="page">
+    <!-- ......... wikipage start ......... -->
+    <!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header" style="cursor: pointer;"><span id="toc__toggle" class="toc_close" style="cursor: pointer;"><span>−</span></span>Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="http://www.ipxe.org/howto/dhcpd#pxe_chainloading" class="toc">PXE chainloading</a></span></div></li>
+<li class="level1"><div class="li"><span class="li"><a href="http://www.ipxe.org/howto/dhcpd#ipxe-specific_options" class="toc">iPXE-specific options</a></span></div></li>
+<li class="level1"><div class="li"><span class="li"><a href="http://www.ipxe.org/howto/dhcpd#speeding_up_dhcp" class="toc">Speeding up DHCP</a></span></div></li>
+<li class="level1"><div class="li"><span class="li"><a href="http://www.ipxe.org/howto/dhcpd#testing_for_specific_features" class="toc">Testing for specific features</a></span></div></li></ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><a name="using_isc_dhcpd" id="using_isc_dhcpd">Using ISC dhcpd</a></h1>
+<div class="level1">
+
+<p>
+
+<a href="http://www.isc.org/software/dhcp" class="urlextern" title="http://www.isc.org/software/dhcp">ISC dhcpd</a> is the default <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> server on most Linux distributions.  It can easily be configured to support iPXE.
+</p>
+
+<p>
+ISC dhcpd is configured using the file <code>/etc/dhcpd.conf</code>.  You can instruct iPXE to boot using the <code>filename</code> directive:
+
+</p>
+<pre class="code">  filename "pxelinux.0";</pre>
+
+<p>
+
+or
+
+</p>
+<pre class="code">  filename "http://boot.ipxe.org/demo/boot.php";</pre>
+
+<p>
+
+To boot from a <acronym title="Storage Area Network">SAN</acronym>, you must use the <code>option root-path</code> directive instead of <code>filename</code>:
+
+</p>
+<pre class="code">  filename "";
+  option root-path "iscsi:iscsi.example.com::::iqn.1992-01.com.example.iscsi:target";</pre>
+
+<p>
+
+or
+
+</p>
+<pre class="code">  filename "";
+  option root-path "aoe:e0.0";</pre>
+
+</div>
+
+<h2><a name="pxe_chainloading" id="pxe_chainloading">PXE chainloading</a></h2>
+<div class="level2">
+
+<p>
+
+<a href="http://www.ipxe.org/_detail/clipart/chain.jpeg?id=howto%3Adhcpd" class="media" title="clipart:chain.jpeg"><img src="./iPXE - open source boot firmware [howto_dhcpd]_files/chain.jpeg" class="mediaright" align="right" title="A chain" alt="A chain" width="200" height="96"></a>
+</p>
+
+<p>
+To use <a href="http://www.ipxe.org/howto/chainloading" class="wikilink1" title="howto:chainloading">PXE chainloading</a>, you need to set up ISC dhcpd to hand out <a href="http://boot.ipxe.org/undionly.kpxe" class="urlextern" title="http://boot.ipxe.org/undionly.kpxe">undionly.kpxe</a> to legacy <acronym title="Preboot Execution Environment">PXE</acronym> clients, and then hand out the “real” boot configuration only to iPXE clients.  You can do this by telling ISC dhcpd to use different configurations based on the <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> user class:
+
+</p>
+<pre class="code">  if exists user-class and option user-class = "iPXE" {
+      filename "http://my.web.server/real_boot_script.php";
+  } else {
+      filename "undionly.kpxe";
+  }</pre>
+
+<p>
+
+This will ensure that the iPXE image (<code>undionly.kpxe</code>) is handed out only when the <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> request comes from a legacy <acronym title="Preboot Execution Environment">PXE</acronym> client.  Once iPXE has been loaded, the <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> server will direct it to boot from <code>http://my.web.server/real_boot_script.php</code>.  You should replace <code>filename "http://my.web.server/real_boot_script.php"</code> with whatever you want iPXE to boot from.  For example, if you want to chainload into iPXE and then boot from an <acronym title="Internet Small Computer Systems Interface">iSCSI</acronym> target, you could use:
+
+</p>
+<pre class="code">  if exists user-class and option user-class = "iPXE" {
+      filename "";
+      option root-path "iscsi:iscsi.example.com::::iqn.1992-01.com.example.iscsi:target";
+  } else {
+      filename "undionly.kpxe";
+  }</pre>
+
+</div>
+
+<h2><a name="ipxe-specific_options" id="ipxe-specific_options">iPXE-specific options</a></h2>
+<div class="level2">
+
+<p>
+
+There are several <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> options that are specific to iPXE and that are not recognised by the standard ISC dhcpd installation.  To add support for these options, place the following at the start of your <code>/etc/dhcpd.conf</code>:
+
+</p>
+<pre class="code">  option space ipxe;
+  option ipxe-encap-opts code 175 = encapsulate ipxe;
+  option ipxe.priority code 1 = signed integer 8;
+  option ipxe.keep-san code 8 = unsigned integer 8;
+  option ipxe.skip-san-boot code 9 = unsigned integer 8;
+  option ipxe.syslogs code 85 = string;
+  option ipxe.cert code 91 = string;
+  option ipxe.privkey code 92 = string;
+  option ipxe.crosscert code 93 = string;
+  option ipxe.no-pxedhcp code 176 = unsigned integer 8;
+  option ipxe.bus-id code 177 = string;
+  option ipxe.san-filename code 188 = string;
+  option ipxe.bios-drive code 189 = unsigned integer 8;
+  option ipxe.username code 190 = string;
+  option ipxe.password code 191 = string;
+  option ipxe.reverse-username code 192 = string;
+  option ipxe.reverse-password code 193 = string;
+  option ipxe.version code 235 = string;
+  option iscsi-initiator-iqn code 203 = string;
+  # Feature indicators
+  option ipxe.pxeext code 16 = unsigned integer 8;
+  option ipxe.iscsi code 17 = unsigned integer 8;
+  option ipxe.aoe code 18 = unsigned integer 8;
+  option ipxe.http code 19 = unsigned integer 8;
+  option ipxe.https code 20 = unsigned integer 8;
+  option ipxe.tftp code 21 = unsigned integer 8;
+  option ipxe.ftp code 22 = unsigned integer 8;
+  option ipxe.dns code 23 = unsigned integer 8;
+  option ipxe.bzimage code 24 = unsigned integer 8;
+  option ipxe.multiboot code 25 = unsigned integer 8;
+  option ipxe.slam code 26 = unsigned integer 8;
+  option ipxe.srp code 27 = unsigned integer 8;
+  option ipxe.nbi code 32 = unsigned integer 8;
+  option ipxe.pxe code 33 = unsigned integer 8;
+  option ipxe.elf code 34 = unsigned integer 8;
+  option ipxe.comboot code 35 = unsigned integer 8;
+  option ipxe.efi code 36 = unsigned integer 8;
+  option ipxe.fcoe code 37 = unsigned integer 8;
+  option ipxe.vlan code 38 = unsigned integer 8;
+  option ipxe.menu code 39 = unsigned integer 8;
+  option ipxe.sdi code 40 = unsigned integer 8;
+  option ipxe.nfs code 41 = unsigned integer 8;</pre>
+
+</div>
+
+<h2><a name="speeding_up_dhcp" id="speeding_up_dhcp">Speeding up DHCP</a></h2>
+<div class="level2">
+
+<p>
+
+The <acronym title="Preboot Execution Environment">PXE</acronym> specification requires iPXE to wait for replies from a ProxyDHCP server before booting.  If you are not using a ProxyDHCP server, then this creates an unnecessary delay of several seconds.  You can eliminate this delay using:
+
+</p>
+<pre class="code">  option ipxe.no-pxedhcp 1;</pre>
+
+<p>
+
+(Do not do this if you <strong>are</strong> using a ProxyDHCP server; it will cause iPXE to ignore whatever the ProxyDHCP server sends!)
+</p>
+
+</div>
+
+<h2><a name="testing_for_specific_features" id="testing_for_specific_features">Testing for specific features</a></h2>
+<div class="level2">
+
+<p>
+
+You can use the feature indicator options to determine whether or not iPXE supports a specific feature.  For example,
+
+</p>
+<pre class="code">  if exists ipxe.fcoe {
+      option root-path "fcp:20:00:52:54:00:aa:b7:01:0";
+  }</pre>
+
+<p>
+
+would hand out an <acronym title="Fibre Channel over Ethernet">FCoE</acronym> root path only to iPXE clients with <acronym title="Fibre Channel over Ethernet">FCoE</acronym> support enabled.
+</p>
+
+</div>
+
+    <!-- ......... wikipage stop  ......... -->
+  </div>
+
+  <div class="clearer">&nbsp;</div>
+
+  
+ 
+  <!-- footer -->  
+  <div class="stylefoot">
+
+        
+    <div class="meta">
+      <div class="doc">
+        howto/dhcpd.txt · Last modified: 2017/04/12 16:18 by mcb30      </div>
+    </div>
+    
+    <div class="bar" id="bar__bottom">
+      <!-- page metadata -->
+      
+      
+      <!--  page actions -->
+      <div class="bar-left" id="bar__bottomleft">
+        <form class="button btn_login" method="get" action="http://www.ipxe.org/howto/dhcpd"><div class="no"><input type="hidden" name="do" value="login"><input type="hidden" name="sectok" value="10be8be1413af85ff1a7bcbf15c2508d"><input type="submit" value="Login" class="button" title="Login"></div></form>      </div>
+      
+      <!--  search form -->
+      <div class="bar-right" id="bar__bottomright" style="position:relative">
+        <form action="http://www.ipxe.org/" accept-charset="utf-8" class="search" id="dw__search"><div class="no"><input type="hidden" name="do" value="search"><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]"><input type="submit" value="Search" class="button" title="Search"><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>      </div>
+      
+      <div class="clearer"></div>
+      
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="footerinc">
+
+  <a href="http://www.ipxe.org/feed.php" title="Recent changes RSS feed"><img src="./iPXE - open source boot firmware [howto_dhcpd]_files/button-rss.png" width="80" height="15" alt="Recent changes RSS feed"></a>
+
+        <a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license" title="CC Attribution-Share Alike 3.0 Unported"><img src="./iPXE - open source boot firmware [howto_dhcpd]_files/cc-by-sa.png" width="80" height="15" alt=""></a>
+  
+  <a href="http://www.dokuwiki.org/donate" title="Donate"><img src="./iPXE - open source boot firmware [howto_dhcpd]_files/button-donate.gif" alt="Donate" width="80" height="15"></a>
+
+  <a href="http://www.php.net/" title="Powered by PHP"><img src="./iPXE - open source boot firmware [howto_dhcpd]_files/button-php.gif" width="80" height="15" alt="Powered by PHP"></a>
+
+  <a href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="./iPXE - open source boot firmware [howto_dhcpd]_files/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0"></a>
+
+  <a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="./iPXE - open source boot firmware [howto_dhcpd]_files/button-css.png" width="80" height="15" alt="Valid CSS"></a>
+
+  <a href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="./iPXE - open source boot firmware [howto_dhcpd]_files/button-dw.png" width="80" height="15" alt="Driven by DokuWiki"></a>
+
+
+</div>
+
+<!-- mcb30 - added CC attribution footer -->
+<div class="dokuwiki"><div class="meta">
+<div class="doc">
+All uses of this content must include an attribution to the iPXE
+project and the URL http://ipxe.org
+</div>
+<div class="doc">
+References to "iPXE" may not be altered or removed.
+</div>
+</div></div>
+
+
+<div class="no">
+    <img src="./iPXE - open source boot firmware [howto_dhcpd]_files/indexer.php" width="1" height="1" alt=""></div>
+
+
+
+</body></html>

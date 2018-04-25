@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0038)http://www.ipxe.org/howto/chainloading -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>
+    iPXE - open source boot firmware    [howto:chainloading]
+  </title>
+
+  <meta name="generator" content="DokuWiki snapshot? unknown">
+<meta name="robots" content="index,follow">
+<meta name="date" content="2017-12-28T17:18:58+0000">
+<meta name="keywords" content="howto,chainloading">
+<link rel="search" type="application/opensearchdescription+xml" href="http://www.ipxe.org/lib/exe/opensearch.php" title="iPXE - open source boot firmware">
+<link rel="start" href="http://www.ipxe.org/">
+<link rel="contents" href="http://www.ipxe.org/howto/chainloading?do=index" title="Index">
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="http://www.ipxe.org/feed.php">
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="http://www.ipxe.org/feed.php?mode=list&amp;ns=howto">
+<link rel="alternate" type="text/html" title="Plain HTML" href="http://www.ipxe.org/_export/xhtml/howto/chainloading">
+<link rel="alternate" type="text/plain" title="Wiki Markup" href="http://www.ipxe.org/_export/raw/howto/chainloading">
+<link rel="canonical" href="http://www.ipxe.org/howto/chainloading">
+<link rel="stylesheet" media="all" type="text/css" href="./iPXE - open source boot firmware [howto_chainloading]_files/css.php">
+<link rel="stylesheet" media="screen" type="text/css" href="./iPXE - open source boot firmware [howto_chainloading]_files/css(1).php">
+<link rel="stylesheet" media="print" type="text/css" href="./iPXE - open source boot firmware [howto_chainloading]_files/css(2).php">
+<script type="text/javascript" charset="utf-8"><!--//--><![CDATA[//><!--
+var NS='howto';var JSINFO = {"id":"howto:chainloading","namespace":"howto"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="./iPXE - open source boot firmware [howto_chainloading]_files/js.php"></script>
+
+  <link rel="shortcut icon" href="http://www.ipxe.org/lib/tpl/doogiestpl/images/favicon.ico">
+
+  <script></script></head>
+
+
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="header_left"></div>
+      <div class="logo">
+        <a href="http://www.ipxe.org/" name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[ALT+H]">iPXE - open source boot firmware</a>      </div>
+      <div class="header_right"></div>
+      <div class="pagename">
+	<a href="http://www.ipxe.org/" name="dokuwiki__logo" id="dokuwiki__logo"><img src="./iPXE - open source boot firmware [howto_chainloading]_files/ipxe-small.png" width="159" height="105" alt="iPXE logo"></a>      </div>
+
+      <div id="tabnavi" class="tabnavi">
+        <ul>
+<li><a href="http://www.ipxe.org/start">Home</a></li>
+<li><a href="http://www.ipxe.org/download">Download</a></li>
+<li><a href="http://www.ipxe.org/pics">Screenshots</a></li>
+<li><a href="http://www.ipxe.org/docs">Documentation</a></li>
+<li><a href="http://www.ipxe.org/faq">FAQ</a></li>
+<li><a href="http://www.ipxe.org/contact">Contact</a></li>
+</ul>
+      </div>
+      
+      <div class="clearer"></div>
+          </div>  
+  </div>
+        
+      <!-- login state -->
+      <div class="user">
+              </div>
+      
+      <!--  breadcrumbs -->
+          
+            
+      
+
+  
+  <div class="page">
+    <!-- ......... wikipage start ......... -->
+    <!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header" style="cursor: pointer;"><span id="toc__toggle" class="toc_close" style="cursor: pointer;"><span>−</span></span>Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="http://www.ipxe.org/howto/chainloading#setting_up_pxe_chainloading" class="toc">Setting up PXE chainloading</a></span></div></li>
+<li class="level1"><div class="li"><span class="li"><a href="http://www.ipxe.org/howto/chainloading#breaking_the_infinite_loop" class="toc">Breaking the infinite loop</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="http://www.ipxe.org/howto/chainloading#breaking_the_loop_with_the_dhcp_server" class="toc">Breaking the loop with the DHCP server</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="http://www.ipxe.org/howto/chainloading#breaking_the_loop_with_an_embedded_script" class="toc">Breaking the loop with an embedded script</a></span></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><span class="li"><a href="http://www.ipxe.org/howto/chainloading#uefi" class="toc">UEFI</a></span></div></li></ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><a name="chainloading_ipxe" id="chainloading_ipxe">Chainloading iPXE</a></h1>
+<div class="level1">
+
+<p>
+
+If you have a large number of machines which already have a <acronym title="Preboot Execution Environment">PXE</acronym> implementation (such as network cards with an existing Intel <acronym title="Preboot Execution Environment">PXE</acronym> ROM), then you may want to avoid having to reflash each machine's network card individually.  You can achieve this by using chainloading.
+</p>
+
+<p>
+To enable chainloading, you need to place a copy of iPXE on your TFTP server.  Your machines will download this copy of iPXE from the TFTP server each time that they boot.
+</p>
+
+<p>
+<a href="http://www.ipxe.org/_detail/clipart/chain.jpeg?id=howto%3Achainloading" class="media" title="clipart:chain.jpeg"><img src="./iPXE - open source boot firmware [howto_chainloading]_files/chain.jpeg" class="mediaright" align="right" title="A chain" alt="A chain" width="300" height="144"></a>
+</p>
+
+</div>
+
+<h2><a name="setting_up_pxe_chainloading" id="setting_up_pxe_chainloading">Setting up PXE chainloading</a></h2>
+<div class="level2">
+
+<p>
+
+Download <a href="http://boot.ipxe.org/undionly.kpxe" class="urlextern" title="http://boot.ipxe.org/undionly.kpxe">http://boot.ipxe.org/undionly.kpxe</a> and save it to your TFTP server directory.
+</p>
+
+<p>
+Configure your <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> server to hand out <code>undionly.kpxe</code> as the boot file.  If you are using <a href="http://www.ipxe.org/howto/dhcpd" class="wikilink1" title="howto:dhcpd">ISC dhcpd</a> then you need to edit <code>/etc/dhcpd.conf</code> to contain
+
+</p>
+<pre class="code">  next-server X.X.X.X;
+  filename "undionly.kpxe";</pre>
+
+<p>
+
+where <strong>X.X.X.X</strong> is the IP address of your TFTP server.
+</p>
+
+<p>
+At this point, you should be able to boot one of your <acronym title="Preboot Execution Environment">PXE</acronym>-capable machines, and see it download iPXE from the TFTP server.  If everything has worked, then you should see the iPXE startup banner appear:
+
+</p>
+<pre class="code">  iPXE -- Open Source Boot Firmware -- http://ipxe.org</pre>
+
+</div>
+
+<h2><a name="breaking_the_infinite_loop" id="breaking_the_infinite_loop">Breaking the infinite loop</a></h2>
+<div class="level2">
+
+<p>
+
+When the chainloaded iPXE starts up, it will issue a fresh <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> request and boot whatever the <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> server hands out.  The <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> server is currently set up to hand out the iPXE image, which means that you will be stuck in an infinite loop: <acronym title="Preboot Execution Environment">PXE</acronym> will load iPXE which will load iPXE which will load iPXE which will load iPXE…
+</p>
+
+</div>
+
+<h3><a name="breaking_the_loop_with_the_dhcp_server" id="breaking_the_loop_with_the_dhcp_server">Breaking the loop with the DHCP server</a></h3>
+<div class="level3">
+
+<p>
+
+One way that you can break this infinite loop is to configure the <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> server to hand out iPXE only for the first <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> request; the second <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> request will return the “real” boot filename.
+
+</p>
+<ul>
+<li class="level1"><div class="li"> <a href="http://www.ipxe.org/howto/dhcpd#pxe_chainloading" class="wikilink1" title="howto:dhcpd">Breaking the infinite loop with ISC dhcpd</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://www.ipxe.org/howto/msdhcp#pxe_chainloading" class="wikilink1" title="howto:msdhcp">Breaking the infinite loop with the Microsoft DHCP server</a></div>
+</li>
+</ul>
+
+</div>
+
+<h3><a name="breaking_the_loop_with_an_embedded_script" id="breaking_the_loop_with_an_embedded_script">Breaking the loop with an embedded script</a></h3>
+<div class="level3">
+
+<p>
+
+Another way to break the infinite loop is to build iPXE with an embedded <a href="http://www.ipxe.org/scripting" class="wikilink1" title="scripting">script</a> that directs iPXE to boot from a fixed <acronym title="Uniform Resource Locator">URL</acronym>.  For example, if you create the script file <code>demo.ipxe</code> containing:
+
+</p>
+<pre class="code">  #!ipxe
+  
+  dhcp
+  chain http://boot.ipxe.org/demo/boot.php</pre>
+
+<p>
+
+and then <a href="http://www.ipxe.org/download" class="wikilink1" title="download">build</a> your own version of iPXE with this script embedded:
+
+</p>
+<pre class="code">  make bin/undionly.kpxe EMBED=demo.ipxe</pre>
+
+<p>
+
+then the chainloaded iPXE will always boot from <code>http://boot.ipxe.org/demo/boot.php</code> regardless of the <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> server configuration.
+</p>
+
+</div>
+
+<h2><a name="uefi" id="uefi">UEFI</a></h2>
+<div class="level2">
+
+<p>
+
+If you have machines which attempt to perform a UEFI network boot, then download <a href="http://boot.ipxe.org/ipxe.efi" class="urlextern" title="http://boot.ipxe.org/ipxe.efi">http://boot.ipxe.org/ipxe.efi</a> and save it to your TFTP server directory.
+</p>
+
+<p>
+You will need to configure your <acronym title="Dynamic Host Configuration Protocol">DHCP</acronym> server to hand out <code>undionly.kpxe</code> as the boot file to BIOS machines and <code>ipxe.efi</code> as the boot file to UEFI machines.  If you are using <a href="http://www.ipxe.org/howto/dhcpd" class="wikilink1" title="howto:dhcpd">ISC dhcpd</a> then edit <code>/etc/dhcpd.conf</code> to contain
+
+</p>
+<pre class="code">  option client-arch code 93 = unsigned integer 16;
+  if option client-arch != 00:00 {
+     filename "ipxe.efi";
+  } else {
+     filename "undionly.kpxe";
+  }
+  next-server X.X.X.X;</pre>
+
+<p>
+
+where <strong>X.X.X.X</strong> is the IP address of your TFTP server.
+</p>
+
+<p>
+Note that UEFI network booting tends to be substantially slower than BIOS network booting, due to fundamental architectural limitations in UEFI.  Most UEFI systems provide the ability to perform a network boot in a BIOS compatibility mode.  You may wish to upgrade your system to use BIOS mode for network booting.
+</p>
+
+</div>
+
+    <!-- ......... wikipage stop  ......... -->
+  </div>
+
+  <div class="clearer">&nbsp;</div>
+
+  
+ 
+  <!-- footer -->  
+  <div class="stylefoot">
+
+        
+    <div class="meta">
+      <div class="doc">
+        howto/chainloading.txt · Last modified: 2017/12/28 17:18 by mcb30      </div>
+    </div>
+    
+    <div class="bar" id="bar__bottom">
+      <!-- page metadata -->
+      
+      
+      <!--  page actions -->
+      <div class="bar-left" id="bar__bottomleft">
+        <form class="button btn_login" method="get" action="http://www.ipxe.org/howto/chainloading"><div class="no"><input type="hidden" name="do" value="login"><input type="hidden" name="sectok" value="10be8be1413af85ff1a7bcbf15c2508d"><input type="submit" value="Login" class="button" title="Login"></div></form>      </div>
+      
+      <!--  search form -->
+      <div class="bar-right" id="bar__bottomright" style="position:relative">
+        <form action="http://www.ipxe.org/" accept-charset="utf-8" class="search" id="dw__search"><div class="no"><input type="hidden" name="do" value="search"><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]"><input type="submit" value="Search" class="button" title="Search"><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>      </div>
+      
+      <div class="clearer"></div>
+      
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="footerinc">
+
+  <a href="http://www.ipxe.org/feed.php" title="Recent changes RSS feed"><img src="./iPXE - open source boot firmware [howto_chainloading]_files/button-rss.png" width="80" height="15" alt="Recent changes RSS feed"></a>
+
+        <a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license" title="CC Attribution-Share Alike 3.0 Unported"><img src="./iPXE - open source boot firmware [howto_chainloading]_files/cc-by-sa.png" width="80" height="15" alt=""></a>
+  
+  <a href="http://www.dokuwiki.org/donate" title="Donate"><img src="./iPXE - open source boot firmware [howto_chainloading]_files/button-donate.gif" alt="Donate" width="80" height="15"></a>
+
+  <a href="http://www.php.net/" title="Powered by PHP"><img src="./iPXE - open source boot firmware [howto_chainloading]_files/button-php.gif" width="80" height="15" alt="Powered by PHP"></a>
+
+  <a href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="./iPXE - open source boot firmware [howto_chainloading]_files/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0"></a>
+
+  <a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="./iPXE - open source boot firmware [howto_chainloading]_files/button-css.png" width="80" height="15" alt="Valid CSS"></a>
+
+  <a href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="./iPXE - open source boot firmware [howto_chainloading]_files/button-dw.png" width="80" height="15" alt="Driven by DokuWiki"></a>
+
+
+</div>
+
+<!-- mcb30 - added CC attribution footer -->
+<div class="dokuwiki"><div class="meta">
+<div class="doc">
+All uses of this content must include an attribution to the iPXE
+project and the URL http://ipxe.org
+</div>
+<div class="doc">
+References to "iPXE" may not be altered or removed.
+</div>
+</div></div>
+
+
+<div class="no">
+    <img src="./iPXE - open source boot firmware [howto_chainloading]_files/indexer.php" width="1" height="1" alt=""></div>
+
+
+
+</body></html>
